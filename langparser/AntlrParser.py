@@ -127,11 +127,49 @@ def genCodeFrag(input,nT,INCLUDE_NT_LIST = None, count=1):
         logging.debug("GenCodeFrag method - Completed ")
         return subcode,out,selectedNTList
 
+
+import os
+import signal
+from functools import wraps
+import time
+class TimeoutError(Exception):
+	pass
+
+def settimeout(seconds=30):
+	settimeout.fname = '/ifuzzer/' + str(time.time()) + '.txt'
+	def decorator(func):
+		def wrapper(*args, **kwargs):
+			def _handle_timeout(signum,message):
+				delete_file = kwargs['trace']
+				if delete_file:
+					os.remove(delete_file)
+					print("deleting ",delete_file)
+					with open(settimeout.fname,'a') as fout:
+						fout.write(delete_file + '\n');
+
+					quit(1337)
+					
+			signal.signal(signal.SIGALRM, _handle_timeout)
+			signal.alarm(seconds)
+
+			try:
+				result = func(*args, **kwargs);
+			except Exception as e:
+				print(e)
+				result = ""
+			finally:
+				signal.alarm(0)
+
+			return result
+		return wraps(func)(wrapper)
+	return decorator
+
 """
 True: Program
 False: File
 """
-def parseTree(input,identKey=""):
+@settimeout()
+def parseTree(input,identKey="",trace=None):
     logging.debug("Parsing Program - Started")
     if len(input)>0:
         try:
