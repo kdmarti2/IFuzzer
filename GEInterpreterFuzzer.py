@@ -103,6 +103,8 @@ if __name__ == "__main__":
     # raw_input(abspath("shellfull.js"))
     if not exists(abspath(FILELISTFILE)):
         g.collectFiles(fileList,FILELISTFILE)
-    if args[0]=="0":
         g.genFragPool()
+    else:
+        if args[0]=="0":
+            g.genFragPool()
     g.runFuzzer(shell,options,returnCodes,INCLUDE_NT,shellfileOption)
