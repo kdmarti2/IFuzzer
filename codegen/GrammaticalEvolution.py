@@ -4,6 +4,7 @@ from os import makedirs,remove
 from threading import Thread
 from datetime import datetime
 from os import path,listdir,remove,kill
+from os.path import abspath
 from random import choice, randint, random
 from re import sub,split
 from subprocess import Popen,PIPE
@@ -21,12 +22,15 @@ from lizard import analyze_file
 import signal 
 import ConfigParser
 import logging
+import hashlib
+
 
 config = ConfigParser.RawConfigParser()
 config.read('ConfigFile.properties')
 
 LOG_FILENAME= config.get('Mappings', 'mappings.logfile');
 LOG_LEVEL= config.get('Mappings', 'loglevel');
+TESTCASESDIR = abspath(config.get('TargetDir','TESTCASES'))
 
 logging.basicConfig(filename=LOG_FILENAME,level=LOG_LEVEL,)
 
@@ -50,6 +54,7 @@ class GrammaticalEvolution(object):
         self.fitness_selections = []
         self.replacement_selections = []        
         
+
         self._crossover_rate = 0.4
         self._children_per_crossover = 2
         self._mutation_type = 's'
@@ -414,8 +419,11 @@ class GrammaticalEvolution(object):
                 refError=False
                 # while True:
                 tempFileObj=open(f.name,"w")
-                tempFileObj.write(program)
+                tempFileObj.write(program) #I think where the script that is generated
                 tempFileObj.close()
+                digest = hashlib.md5(program.encode()).hexdigest()
+		with open(TESTCASESDIR+digest,'w') as fout:
+			fout.write(program)
                 ti1=time()
                 l=[None,None]
                 t=Thread(target=self.run_cmd,kwargs={'fi':f.name,'l':l,'option':self.interpreter_Options[0],'shellNum':0})
