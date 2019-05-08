@@ -17,7 +17,7 @@ elif [ "$1" == "-g" ]; then
 		jython -J-Xmx2000m -J-XX:-UseGCOverheadLimit GEInterpreterFuzzer.py 0
 		rc=$?; if [[ $rc != 1337 ]]; then break; fi
 	done
-	do
+	while true; do
 		date
 		jython -J-Xmx2000m -J-XX:-UseGCOverheadLimit GEInterpreterFuzzer.py 2
 	done
