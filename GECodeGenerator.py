@@ -216,7 +216,7 @@ class GECodeGenerator(object):
                 fi=open(path.abspath(f),"r")
                 program=fi.read()
                 fi.close()
-                xml=parseTree(program)
+                xml=parseTree(program,trace=path.abspath(f))
                 fileName=path.abspath(parsetreedir+"/"+str(count))
                 fi=open(fileName,"w")
                 fi.write(xml)
