@@ -422,7 +422,7 @@ class GrammaticalEvolution(object):
                 tempFileObj.write(program) #I think where the script that is generated
                 tempFileObj.close()
                 digest = hashlib.md5(program.encode()).hexdigest()
-		with open(TESTCASESDIR+digest,'w') as fout:
+		with open(TESTCASESDIR+'/'+digest,'w') as fout:
 			fout.write(program)
                 ti1=time()
                 l=[None,None]
